@@ -22,7 +22,7 @@ public class LoginRequestViewModel extends ViewModel {
 		return tokenLiveData;
 	}
 
-	public void requestLogin(User user) {
+	public void requestLogin(User user) {// user相当于请求体
 		DataRepository.getInstance().login(user, tokenLiveData);
 	}
 }

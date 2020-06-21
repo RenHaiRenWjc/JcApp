@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -98,7 +99,7 @@ public abstract class BaseFragment extends Fragment {
 
 		ViewDataBinding binding = DataBindingUtil.inflate(inflater, dataBindingConfig.getLayout(), container, false);
 		binding.setLifecycleOwner(this);
-//		binding.setVariable(BR.vm, dataBindingConfig.getStateViewModel());
+		binding.setVariable(BR.vm, dataBindingConfig.getStateViewModel());
 		SparseArray bindingParams = dataBindingConfig.getBindingParams();
 		for (int i = 0, length = bindingParams.size(); i < length; i++) {
 			binding.setVariable(bindingParams.keyAt(i), bindingParams.valueAt(i));
@@ -143,5 +144,7 @@ public abstract class BaseFragment extends Fragment {
 		return NavHostFragment.findNavController(this);
 	}
 
-
+	protected void showLongToast(String text) {
+		Toast.makeText(mActivity.getApplicationContext(), text, Toast.LENGTH_LONG).show();
+	}
 }

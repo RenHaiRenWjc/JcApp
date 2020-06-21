@@ -39,17 +39,17 @@ public class MainLoginFragment extends BaseFragment {
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_main_login, mLoginViewModel)
+        return new DataBindingConfig(R.layout.fragment_main_login, null)
             .addBindingParam(BR.click, new ClickProxy());
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAccountRequestViewModel.getTokenLiveData().observe(getViewLifecycleOwner(), s -> {
-            mLoginViewModel.loadingVisible.set(false);
-            nav().navigateUp();
-        });
+//        mAccountRequestViewModel.getTokenLiveData().observe(getViewLifecycleOwner(), s -> {
+//            mLoginViewModel.loadingVisible.set(false);
+//            nav().navigateUp();
+//        });
     }
 
     public class ClickProxy {

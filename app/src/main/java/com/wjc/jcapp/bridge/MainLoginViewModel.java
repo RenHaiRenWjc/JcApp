@@ -7,5 +7,5 @@ import androidx.lifecycle.ViewModel;
  * Description:
  * JcChen on 2020.06.21.6:01 PM
  */
-public class MainActivityViewModel extends ViewModel {
+public class MainLoginViewModel extends ViewModel {
 }

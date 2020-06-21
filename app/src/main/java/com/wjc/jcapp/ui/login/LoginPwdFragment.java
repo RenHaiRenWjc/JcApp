@@ -2,65 +2,72 @@ package com.wjc.jcapp.ui.login;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.wjc.jcapp.BR;
 import com.wjc.jcapp.R;
+import com.wjc.jcapp.bridge.LoginRequestViewModel;
+import com.wjc.jcapp.bridge.LoginViewModel;
+import com.wjc.jcapp.data.User;
+import com.wjc.jcapp.ui.base.BaseFragment;
+import com.wjc.jcapp.ui.base.DataBindingConfig;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link LoginPwdFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LoginPwdFragment extends Fragment {
+public class LoginPwdFragment extends BaseFragment {
+	private LoginViewModel mLoginViewModel;
+	private LoginRequestViewModel mAccountRequestViewModel;
 
-	// TODO: Rename parameter arguments, choose names that match
-	// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-	private static final String ARG_PARAM1 = "param1";
-	private static final String ARG_PARAM2 = "param2";
-
-	// TODO: Rename and change types of parameters
-	private String mParam1;
-	private String mParam2;
-
-	public LoginPwdFragment() {
-		// Required empty public constructor
-	}
-
-	/**
-	 * Use this factory method to create a new instance of
-	 * this fragment using the provided parameters.
-	 *
-	 * @param param1 Parameter 1.
-	 * @param param2 Parameter 2.
-	 * @return A new instance of fragment LoginPwdFragment.
-	 */
-	// TODO: Rename and change types and number of parameters
-	public static LoginPwdFragment newInstance(String param1, String param2) {
-		LoginPwdFragment fragment = new LoginPwdFragment();
-		Bundle args = new Bundle();
-		args.putString(ARG_PARAM1, param1);
-		args.putString(ARG_PARAM2, param2);
-		fragment.setArguments(args);
-		return fragment;
+	@Override
+	protected void initViewModel() {
+		mLoginViewModel = getFragmentViewModel(LoginViewModel.class);
+		mAccountRequestViewModel = getFragmentViewModel(LoginRequestViewModel.class);
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (getArguments() != null) {
-			mParam1 = getArguments().getString(ARG_PARAM1);
-			mParam2 = getArguments().getString(ARG_PARAM2);
-		}
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
-		return inflater.inflate(R.layout.fragment_login_pwd, container, false);
+	protected DataBindingConfig getDataBindingConfig() {
+		return new DataBindingConfig(R.layout.fragment_login_pwd, mLoginViewModel)
+			.addBindingParam(BR.click, new ClickProxy());
+	}
+
+	@Override
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+        mAccountRequestViewModel.getTokenLiveData().observe(getViewLifecycleOwner(), s -> {
+            mLoginViewModel.loadingVisible.set(false);
+//            nav().navigateUp();
+			getActivity().finish();
+        });
+	}
+
+	public class ClickProxy {
+
+		public void back() {
+			nav().navigateUp();
+		}
+
+		public void login() {
+			if (TextUtils.isEmpty(mLoginViewModel.name.get()) || TextUtils.isEmpty(mLoginViewModel.password.get())) {
+				showLongToast("用户名或密码不完整");
+				return;
+			}
+			User user = new User(mLoginViewModel.name.get(), mLoginViewModel.password.get());
+			mAccountRequestViewModel.requestLogin(user);
+			mLoginViewModel.loadingVisible.set(true);
+		}
+
 	}
 }
